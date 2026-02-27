@@ -195,6 +195,49 @@ function normalizePwaUpdateStatusPayload(payload: unknown): PwaUpdateStatus | nu
   }
 }
 
+function buildFallbackCurrencyOptions() {
+  const intlWithSupportedValues = Intl as typeof Intl & {
+    supportedValuesOf?: (key: string) => string[]
+  }
+  const supported =
+    intlWithSupportedValues.supportedValuesOf?.('currency') ?? [
+      'USD',
+      'EUR',
+      'GBP',
+      'JPY',
+      'CAD',
+      'AUD',
+      'CHF',
+      'CNY',
+      'INR',
+      'MXN',
+      'BRL',
+      'AED',
+      'SGD',
+      'HKD',
+      'ZAR',
+    ]
+  const displayNames =
+    typeof Intl.DisplayNames === 'function'
+      ? new Intl.DisplayNames(['en'], { type: 'currency' })
+      : null
+
+  return Array.from(
+    new Set(
+      supported
+        .map((currencyCode) => currencyCode.trim().toUpperCase())
+        .filter((currencyCode) => /^[A-Z]{3}$/.test(currencyCode)),
+    ),
+  )
+    .sort((left, right) => left.localeCompare(right))
+    .map((currencyCode) => ({
+      code: currencyCode,
+      name: displayNames?.of(currencyCode) ?? currencyCode,
+    }))
+}
+
+const FALLBACK_CURRENCY_OPTIONS = buildFallbackCurrencyOptions()
+
 const EMPTY_DASHBOARD_DATA: DashboardData = {
   summary: {
     totalAssets: 0,
@@ -1144,7 +1187,7 @@ export function FinanceDashboard({
       displayCurrency: displayCurrencyOverride ?? 'USD',
       baseCurrency: displayCurrencyOverride ?? 'USD',
       locale: browserLocale,
-      availableCurrencies: [{ code: displayCurrencyOverride ?? 'USD', name: displayCurrencyOverride ?? 'USD' }],
+      availableCurrencies: FALLBACK_CURRENCY_OPTIONS,
       syntheticRates: false,
       fxAsOfMs: null,
       fxSources: [] as string[],

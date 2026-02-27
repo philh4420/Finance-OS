@@ -177,10 +177,13 @@ export const getPhaseFivePlanningWorkspace = query({
       planningVersionsWithCounts[0]?.cycleKey ??
       currentCycleKey
 
+    const catalogCurrencyCodes = resolveCurrencyCatalogCodes(
+      currencyCatalog as Array<Record<string, unknown>>,
+    )
     const currencyOptions = Array.from(
       new Set(
         [
-          ...currencyCatalog.map((row: any) => normalizeCurrencyCode(optionalString(row.code))),
+          ...catalogCurrencyCodes,
           baseCurrency,
           displayCurrency,
           ...mappedGoals.map((row) => row.currency),
@@ -1747,4 +1750,46 @@ function sanitizeLocale(locale?: string) {
   } catch {
     return DEFAULT_LOCALE
   }
+}
+
+function resolveCurrencyCatalogCodes(rows: Array<Record<string, unknown>>) {
+  const fromCatalog = Array.from(
+    new Set(
+      rows
+        .map((row) => normalizeCurrencyCode(optionalString(row.code)))
+        .filter((code): code is string => Boolean(code && /^[A-Z]{3}$/.test(code))),
+    ),
+  ).sort((a, b) => a.localeCompare(b))
+
+  if (fromCatalog.length) return fromCatalog
+
+  const intlWithSupportedValues = Intl as typeof Intl & {
+    supportedValuesOf?: (key: string) => string[]
+  }
+  const fallback =
+    intlWithSupportedValues.supportedValuesOf?.('currency') ?? [
+      'USD',
+      'EUR',
+      'GBP',
+      'JPY',
+      'CAD',
+      'AUD',
+      'CHF',
+      'CNY',
+      'INR',
+      'MXN',
+      'BRL',
+      'AED',
+      'SGD',
+      'HKD',
+      'ZAR',
+    ]
+
+  return Array.from(
+    new Set(
+      fallback
+        .map((code) => normalizeCurrencyCode(code))
+        .filter((code) => /^[A-Z]{3}$/.test(code)),
+    ),
+  ).sort((a, b) => a.localeCompare(b))
 }

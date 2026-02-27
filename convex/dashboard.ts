@@ -17,7 +17,6 @@ import {
   viewerUserId as sharedViewerUserId,
 } from './_shared/guardrails'
 import {
-  buildFractionDigitsByCurrency as sharedBuildFractionDigitsByCurrency,
   buildFxMapFromRateRows as sharedBuildFxMapFromRateRows,
   buildPostedFxSnapshot as sharedBuildPostedFxSnapshot,
 } from './_shared/money_fx'
@@ -219,27 +218,16 @@ export const getDashboard = query({
       ctx.db.query('fxRates').collect(),
     ])
 
-    const currencyCatalog = currencyDocs
-      .map((row) => ({
-        code: normalizeCurrencyCode(row.code),
-        name: row.name,
-        fractionDigits: row.fractionDigits,
-        symbol: row.symbol ?? undefined,
-      }))
-      .sort((a, b) => a.code.localeCompare(b.code))
+    const currencyCatalog = normalizeCurrencyCatalogRows(
+      currencyDocs as Array<Record<string, unknown>>,
+    )
 
     const currencySet = new Set(currencyCatalog.map((row) => row.code))
-    const fxMap = new Map<string, { rate: number; synthetic: boolean; asOfMs: number; source: string }>()
-
-    for (const row of fxDocs) {
-      if (normalizeCurrencyCode(row.baseCurrency) !== 'USD') continue
-      fxMap.set(normalizeCurrencyCode(row.quoteCurrency), {
-        rate: row.rate,
-        synthetic: row.synthetic,
-        asOfMs: row.asOfMs,
-        source: row.source,
-      })
-    }
+    const fxMap = buildFxMapFromRateRows(
+      fxDocs as Array<Record<string, unknown>>,
+      currencyCatalog,
+    )
+    const fxEntries = Array.from(fxMap.values())
 
     const fractionDigitsByCurrency = new Map(
       currencyCatalog.map((row) => [row.code, row.fractionDigits]),
@@ -413,9 +401,12 @@ export const getDashboard = query({
         viewerAuthenticated: Boolean(userId),
         viewerUserId: userId,
         hasLiveData: Boolean(liveSnapshot),
-        fxAsOfMs: Math.max(...fxDocs.map((row) => row.asOfMs), snapshotSource.seededAtMs),
-        fxSources: Array.from(new Set(fxDocs.map((row) => row.source))).sort(),
-        syntheticRates: fxDocs.some((row) => row.synthetic),
+        fxAsOfMs: Math.max(
+          ...fxEntries.map((entry) => entry.asOfMs),
+          snapshotSource.seededAtMs,
+        ),
+        fxSources: Array.from(new Set(fxEntries.map((entry) => entry.source))).sort(),
+        syntheticRates: fxEntries.some((entry) => entry.synthetic),
         availableCurrencies: [
           ...currencyCatalog.filter((row) => pinnedSet.has(row.code)),
           ...currencyCatalog.filter((row) => !pinnedSet.has(row.code)),
@@ -1990,25 +1981,15 @@ export const getPhaseThreePurchaseWorkspace = query({
         ctx.db.query('fxRates').collect(),
       ])
 
-    const currencyCatalog = currencyDocs
-      .map((row: any) => ({
-        code: normalizeCurrencyCode(row.code),
-        name: String(row.name ?? normalizeCurrencyCode(row.code)),
-        fractionDigits: Math.max(0, Math.trunc(numberOr(row.fractionDigits, currencyFractionDigits(row.code)))),
-      }))
-      .sort((a, b) => a.code.localeCompare(b.code))
+    const currencyCatalog = normalizeCurrencyCatalogRows(
+      currencyDocs as Array<Record<string, unknown>>,
+    )
 
     const currencySet = new Set(currencyCatalog.map((row) => row.code))
-    const fxMap = new Map<string, { rate: number; synthetic: boolean; asOfMs: number; source: string }>()
-    for (const row of fxDocs) {
-      if (normalizeCurrencyCode((row as any).baseCurrency) !== 'USD') continue
-      fxMap.set(normalizeCurrencyCode((row as any).quoteCurrency), {
-        rate: numberOr((row as any).rate, 1),
-        synthetic: Boolean((row as any).synthetic),
-        asOfMs: Math.trunc(numberOr((row as any).asOfMs, Date.now())),
-        source: String((row as any).source ?? 'unknown'),
-      })
-    }
+    const fxMap = buildFxMapFromRateRows(
+      fxDocs as Array<Record<string, unknown>>,
+      currencyCatalog,
+    )
 
     const fractionDigitsByCurrency = new Map<string, number>(
       currencyCatalog.map((row) => [row.code, row.fractionDigits]),
@@ -2352,8 +2333,16 @@ export const recordPurchaseWithLedgerPosting = mutation({
       safeCollectDocs(financeDb, 'currencyCatalog'),
       safeCollectDocs(financeDb, 'fxRates'),
     ])
-    const fractionDigitsByCurrency = buildFractionDigitsByCurrency(currencyDocs)
-    const fxMap = buildFxMapFromRateRows(fxDocs)
+    const currencyCatalog = normalizeCurrencyCatalogRows(
+      currencyDocs as Array<Record<string, unknown>>,
+    )
+    const fractionDigitsByCurrency = buildFractionDigitsByCurrency(
+      currencyCatalog as Array<Record<string, unknown>>,
+    )
+    const fxMap = buildFxMapFromRateRows(
+      fxDocs as Array<Record<string, unknown>>,
+      currencyCatalog,
+    )
     const baseCurrency = normalizeCurrencyCode(
       optionalString((prefDoc as any)?.currency) ?? DEFAULT_DISPLAY_CURRENCY,
     )
@@ -3519,12 +3508,83 @@ function conversionRate(from: string, to: string, fxMap: FxMap) {
   return usdToTarget / usdToSource
 }
 
-function buildFxMapFromRateRows(rows: Array<Record<string, unknown>>): FxMap {
-  return sharedBuildFxMapFromRateRows(rows)
+function normalizeCurrencyCatalogRows(
+  rows: Array<Record<string, unknown>>,
+): CurrencyCatalogRow[] {
+  const catalogByCode = new Map<string, CurrencyCatalogRow>()
+
+  for (const row of rows) {
+    const code = normalizeCurrencyCode(String(row.code ?? ''))
+    if (!/^[A-Z]{3}$/.test(code)) continue
+    if (catalogByCode.has(code)) continue
+    const name =
+      typeof row.name === 'string' && row.name.trim().length
+        ? row.name.trim()
+        : code
+    const fractionDigits = Math.max(
+      0,
+      Math.trunc(numberOr(row.fractionDigits, currencyFractionDigits(code))),
+    )
+    const symbol =
+      typeof row.symbol === 'string' && row.symbol.trim().length
+        ? row.symbol.trim()
+        : undefined
+    catalogByCode.set(code, {
+      code,
+      name,
+      fractionDigits,
+      symbol,
+    })
+  }
+
+  const normalized = Array.from(catalogByCode.values()).sort((a, b) =>
+    a.code.localeCompare(b.code),
+  )
+  return normalized.length ? normalized : buildCurrencyCatalog()
+}
+
+function buildFxMapFromRateRows(
+  rows: Array<Record<string, unknown>>,
+  currencyCatalog?: CurrencyCatalogRow[],
+  asOfMs = Date.now(),
+): FxMap {
+  const effectiveCatalog =
+    currencyCatalog && currencyCatalog.length
+      ? currencyCatalog
+      : normalizeCurrencyCatalogRows([])
+  const fallbackUsdRates = buildUsdQuoteRates(
+    effectiveCatalog.map((row) => row.code),
+  )
+  const fxMap: FxMap = new Map()
+  for (const [quoteCurrency, spec] of fallbackUsdRates.entries()) {
+    fxMap.set(quoteCurrency, {
+      rate: spec.rate,
+      synthetic: spec.synthetic,
+      asOfMs,
+      source: spec.source,
+    })
+  }
+
+  const liveFxMap = sharedBuildFxMapFromRateRows(rows)
+  for (const [quoteCurrency, spec] of liveFxMap.entries()) {
+    fxMap.set(quoteCurrency, spec)
+  }
+
+  if (!fxMap.has('USD')) {
+    fxMap.set('USD', {
+      rate: 1,
+      synthetic: false,
+      asOfMs,
+      source: 'identity',
+    })
+  }
+
+  return fxMap
 }
 
 function buildFractionDigitsByCurrency(rows: Array<Record<string, unknown>>) {
-  return sharedBuildFractionDigitsByCurrency(rows)
+  const normalized = normalizeCurrencyCatalogRows(rows)
+  return new Map(normalized.map((row) => [row.code, row.fractionDigits]))
 }
 
 function buildPostedFxSnapshot({
