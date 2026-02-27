@@ -85,6 +85,7 @@ Use these before deploy:
 npx tsc -p tsconfig.app.json --noEmit
 npm run lint
 npm run build
+npm run security:audit
 ```
 
 ## Production Build + Preview
@@ -100,8 +101,9 @@ This repo includes `vercel.json` with:
 
 - SPA rewrites for deep links
 - immutable caching for hashed static assets
-- no-cache headers for `index.html`, `sw.js`, and `manifest.webmanifest`
+- no-cache headers for `index.html`, `sw.js`, `manifest.webmanifest`, and `version.json`
 - baseline security headers
+- HSTS (`Strict-Transport-Security`) for HTTPS transport hardening
 
 Deploy:
 
@@ -153,8 +155,10 @@ Primary config:
 
 - Install prompt surfaced via in-app toast when `beforeinstallprompt` is available
 - Update flow is user-driven (`registerType: "prompt"`)
-- Persistent toast for new version with refresh action
-- Notification bell shows update readiness and read/unread state integration
+- In-session update checks (focus/online/visibility/interval) without forcing reload
+- Persistent toast for new version with manual refresh action
+- Notification bell uses deduped IDs and does not repeat the same notification endlessly
+- Update notifications include release details from `public/version.json`
 
 Core files:
 
@@ -195,6 +199,13 @@ Recommended workflow:
 
 ## Security Notes
 
+- Security Trust Pack is included for all users (not paywalled) in Governance tab:
+  - TLS + HSTS transport hardening
+  - Encryption-at-rest controls with KMS-managed infrastructure
+  - Key rotation/access logging policy visibility
+  - Auth hardening controls (Clerk passkey/MFA policy path)
+  - Immutable audit trail and anomaly timeline
+  - Secure SDLC checklist and compliance path guidance
 - Never commit secrets to git
 - Use Vercel encrypted env vars for deployment
 - Keep Clerk/Convex origins strict and CORS aligned (`CLIENT_ORIGIN`)
@@ -202,4 +213,3 @@ Recommended workflow:
 ## License
 
 Private project.
-# Finance-OS

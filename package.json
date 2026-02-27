@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "security:audit": "npm audit --audit-level=moderate",
+    "security:checks": "npm run lint && npx tsc -p tsconfig.app.json --noEmit && npm run build",
     "preview": "vite preview",
     "convex:run": "node ./scripts/convex-safe.mjs run",
     "convex:codegen": "node ./scripts/convex-safe.mjs codegen --typecheck disable",

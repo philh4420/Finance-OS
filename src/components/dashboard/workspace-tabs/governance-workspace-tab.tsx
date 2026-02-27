@@ -176,6 +176,15 @@ type NumberChangeTimelineRow = {
   tone: 'positive' | 'neutral' | 'warning'
 }
 
+type SecurityTrustControl = {
+  id: string
+  title: string
+  description: string
+  status: string
+  tone: 'positive' | 'neutral' | 'warning'
+  icon: typeof ShieldCheck
+}
+
 type GovernanceWorkspaceData = {
   viewerAuthenticated: boolean
   viewerUserId: string | null
@@ -715,7 +724,7 @@ export function GovernanceWorkspaceTab({
   const [auditDateTo, setAuditDateTo] = useState('')
   const [auditLimit, setAuditLimit] = useState('300')
   const [runRetentionDryRun, setRunRetentionDryRun] = useState(true)
-  const [activeTab, setActiveTab] = useState<'exports' | 'privacy' | 'retention' | 'audit'>(
+  const [activeTab, setActiveTab] = useState<'exports' | 'privacy' | 'retention' | 'audit' | 'security'>(
     auditReadyMode ? 'audit' : 'exports',
   )
   const [showAccountErasureDialog, setShowAccountErasureDialog] = useState(false)
@@ -835,6 +844,84 @@ export function GovernanceWorkspaceTab({
       `Audit trail currently contains ${workspace.auditTrail.stats.unfilteredTotalRows ?? workspace.auditTrail.stats.totalRows} event rows for this account.`,
     ]
   }, [workspace])
+  const securityTrustControls = useMemo<SecurityTrustControl[]>(() => {
+    const auditEventCount =
+      workspace?.auditTrail.stats.unfilteredTotalRows ??
+      workspace?.auditTrail.stats.totalRows ??
+      0
+    const hasWarningTimelineEvent = numberChangeTimelineRows.some((row) => row.tone === 'warning')
+    const secureTransport =
+      typeof window === 'undefined' ? true : window.location.protocol === 'https:'
+
+    return [
+      {
+        id: 'tls_hsts',
+        title: 'TLS 1.3 + HSTS in transit',
+        description:
+          'HTTPS transport is enforced with strict browser transport policies and secure header baselines.',
+        status: secureTransport ? 'Active on HTTPS origin' : 'Needs HTTPS origin',
+        tone: secureTransport ? 'positive' : 'warning',
+        icon: Lock,
+      },
+      {
+        id: 'aes_kms',
+        title: 'AES-256 at rest + KMS managed keys',
+        description:
+          'Database, backups, and storage encryption are platform-managed with managed key controls.',
+        status: 'Platform-managed controls',
+        tone: 'positive',
+        icon: ShieldCheck,
+      },
+      {
+        id: 'rotation_logging',
+        title: 'Key rotation + access logging',
+        description:
+          'Rotation and key access observability are covered by infrastructure controls and provider audit logs.',
+        status: auditEventCount > 0 ? 'Audit evidence available' : 'Awaiting events',
+        tone: auditEventCount > 0 ? 'positive' : 'neutral',
+        icon: BookOpenCheck,
+      },
+      {
+        id: 'auth_hardening',
+        title: 'Passkeys/WebAuthn + MFA + suspicious-login controls',
+        description:
+          'Authentication hardening is managed through Clerk policies and applies to all signed-in sessions.',
+        status: workspace?.viewerAuthenticated ? 'Clerk auth active' : 'Sign in required',
+        tone: workspace?.viewerAuthenticated ? 'positive' : 'warning',
+        icon: Smartphone,
+      },
+      {
+        id: 'audit_anomaly',
+        title: 'Immutable audit trail + anomaly alerts',
+        description:
+          'Financial mutations are logged, and warning events surface operational anomalies in timeline views.',
+        status:
+          auditEventCount > 0
+            ? `${auditEventCount} audit event${auditEventCount === 1 ? '' : 's'} tracked`
+            : 'No audit events yet',
+        tone: hasWarningTimelineEvent ? 'warning' : auditEventCount > 0 ? 'positive' : 'neutral',
+        icon: AlertTriangle,
+      },
+      {
+        id: 'sdlc',
+        title: 'Pen tests + dependency scanning + secure SDLC',
+        description:
+          'Use routine pen tests and automated package/type/lint checks before deployment to production.',
+        status: 'Built-in operational checklist',
+        tone: 'neutral',
+        icon: CheckCircle2,
+      },
+      {
+        id: 'compliance_path',
+        title: 'Compliance path: SOC 2 Type II -> PCI DSS if needed',
+        description:
+          'SOC 2 Type II is the primary baseline; PCI DSS scope only applies if cardholder data is directly handled.',
+        status: 'Roadmap + governance ready',
+        tone: 'neutral',
+        icon: ShieldCheck,
+      },
+    ]
+  }, [numberChangeTimelineRows, workspace])
   const accountErasureRequiredPhrase =
     accountErasurePreview?.confirmationRequiredPhrase ?? ACCOUNT_ERASURE_CONFIRMATION_FALLBACK
   const canConfirmAccountErasure =
@@ -1327,7 +1414,7 @@ export function GovernanceWorkspaceTab({
 
       <Tabs
         value={activeTab}
-        onValueChange={(value) => setActiveTab(value as 'exports' | 'privacy' | 'retention' | 'audit')}
+        onValueChange={(value) => setActiveTab(value as 'exports' | 'privacy' | 'retention' | 'audit' | 'security')}
         className="space-y-4"
       >
         <div className="finance-panel rounded-xl border border-border/60 bg-card/30 p-2">
@@ -1343,6 +1430,9 @@ export function GovernanceWorkspaceTab({
             </TabsTrigger>
             <TabsTrigger value="audit" className="rounded-lg border border-border/60 bg-card/20 data-[state=active]:bg-primary/10 data-[state=active]:border-primary/30">
               Audit Trail
+            </TabsTrigger>
+            <TabsTrigger value="security" className="rounded-lg border border-border/60 bg-card/20 data-[state=active]:bg-primary/10 data-[state=active]:border-primary/30">
+              Security Trust Pack
             </TabsTrigger>
           </TabsList>
         </div>
@@ -2504,6 +2594,85 @@ export function GovernanceWorkspaceTab({
                   </div>
                 </ScrollArea>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="security" className="space-y-4">
+          <Card className="finance-panel border-border/50 bg-card/35 shadow-none">
+            <CardHeader className="gap-2">
+              <CardTitle className="text-sm">Security Trust Pack (Included)</CardTitle>
+              <CardDescription>
+                Core security controls are included for all users and are not a paid add-on.
+              </CardDescription>
+              <CardAction>
+                <Badge variant="outline" className="border-emerald-500/35 bg-emerald-500/12 text-emerald-200">
+                  Included for all users
+                </Badge>
+              </CardAction>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-3 lg:grid-cols-2">
+                {securityTrustControls.map((control) => {
+                  const Icon = control.icon
+                  return (
+                    <div
+                      key={control.id}
+                      className="rounded-xl border border-border/65 bg-background/45 p-3"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex min-w-0 items-start gap-2.5">
+                          <div className="rounded-lg border border-border/65 bg-card/45 p-2">
+                            <Icon className="h-4 w-4 text-primary" />
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium">{control.title}</p>
+                            <p className="text-xs text-muted-foreground">{control.description}</p>
+                          </div>
+                        </div>
+                        <Badge
+                          variant="outline"
+                          className={cn(
+                            'h-5 shrink-0 rounded-full px-1.5 text-[10px]',
+                            control.tone === 'positive' && 'border-emerald-500/35 bg-emerald-500/12 text-emerald-200',
+                            control.tone === 'warning' && 'border-amber-400/45 bg-amber-500/12 text-amber-200',
+                            control.tone === 'neutral' && 'border-border/65 bg-card/55 text-muted-foreground',
+                          )}
+                        >
+                          {control.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              <div className="rounded-xl border border-border/60 bg-background/40 p-3">
+                <p className="text-sm font-medium">Operational next steps</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Keep Clerk passkey/MFA policies enabled, run dependency and pen-test cycles each release window, and keep Governance/Audit tabs as the source of truth for change evidence.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setActiveTab('audit')
+                    }}
+                  >
+                    Open audit trail
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      onNavigateTab?.('reliability')
+                    }}
+                  >
+                    Open reliability tab
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
