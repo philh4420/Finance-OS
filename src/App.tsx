@@ -10,7 +10,6 @@ import {
 import { useQuery } from 'convex/react'
 import {
   ArrowRight,
-  BadgeCheck,
   BriefcaseBusiness,
   ChartNoAxesCombined,
   Check,
@@ -199,8 +198,8 @@ function SignedOutLanding({
             <a href="#security" className="text-sm text-muted-foreground transition hover:text-foreground">
               Security
             </a>
-            <a href="#pricing" className="text-sm text-muted-foreground transition hover:text-foreground">
-              Pricing
+            <a href="#free-access" className="text-sm text-muted-foreground transition hover:text-foreground">
+              Free access
             </a>
           </div>
 
@@ -235,12 +234,12 @@ function SignedOutLanding({
 
               <div className="space-y-4">
                 <h1 className="finance-display text-4xl leading-[0.95] text-white sm:text-5xl lg:text-6xl">
-                  Finance operations, portfolios, and cashflow in one professional workspace.
+                  Personal Finance OS with real-time control, planning, and governance.
                 </h1>
                 <p className="max-w-2xl text-sm text-muted-foreground sm:text-base">
                   Sign up or sign in to access a secure, installable finance dashboard built for
-                  2026+ teams. Multi-currency ready, Convex-backed, and designed for real
-                  day-to-day operating decisions.
+                  2026+ money operations. Multi-currency ready, Convex-backed, and designed for
+                  daily decisions, payday windows, and month-close confidence.
                 </p>
               </div>
 
@@ -262,25 +261,25 @@ function SignedOutLanding({
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <FeatureMini
                   icon={ShieldCheck}
-                  title="Secure access"
-                  subtitle="Clerk auth, session controls, org-ready sign-in"
+                  title="Trust + security"
+                  subtitle="Security Trust Pack, governance controls, and auditability"
                 />
                 <FeatureMini
                   icon={ChartNoAxesCombined}
-                  title="Realtime data"
-                  subtitle="Convex-backed dashboard queries and preferences"
+                  title="Realtime finance state"
+                  subtitle="Live Convex workspace across dashboard, planning, and automation"
                 />
                 <FeatureMini
                   icon={Globe}
                   title="Global currency"
-                  subtitle="Display currency switching with Intl-aware formatting"
+                  subtitle="World-currency catalog with Intl-aware display and FX snapshots"
                 />
               </div>
 
               <div className="finance-panel grid gap-4 p-4 sm:grid-cols-3">
-                <TrustItem label="Installable PWA" value="Offline-ready shell" icon={Smartphone} />
-                <TrustItem label="Security posture" value="Clerk + Convex" icon={Lock} />
-                <TrustItem label="Setup speed" value="< 5 min to first login" icon={Clock3} />
+                <TrustItem label="Installable PWA" value="Realtime updates + offline queue" icon={Smartphone} />
+                <TrustItem label="Security posture" value="TLS/AES controls + audit trails" icon={Lock} />
+                <TrustItem label="Setup speed" value="< 5 min to first finance record" icon={Clock3} />
               </div>
             </div>
 
@@ -382,39 +381,69 @@ function SignedOutLanding({
           <section id="features" className="mt-8 space-y-4">
             <SectionHeading
               eyebrow="Features"
-              title="Built for operators, finance teams, and founders"
-              subtitle="A modern start page and an authenticated application shell designed to feel like a product, not a template."
+              title="Everything included in the free Finance OS"
+              subtitle="A modern start page and authenticated finance workspace built as a complete product, not a template."
             />
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <FeatureCard
                 icon={Wallet}
-                title="Cashflow and runway visibility"
-                description="Track liquid cash, monthly net, and budget pressure in one dashboard."
+                title="Today + runway operations"
+                description="Actionable due items, runway and obligations, and payday-to-payday cashflow windows."
               />
               <FeatureCard
                 icon={CreditCard}
-                title="Transactions and reconciliation"
-                description="Searchable activity ledger with status, categories, and export actions."
+                title="Connected finance modules"
+                description="Accounts, income, bills, cards, loans, shopping, and transactions stay in sync."
               />
               <FeatureCard
                 icon={Globe}
-                title="World-currency display modes"
-                description="Users can choose display currency while preserving native transaction hints."
+                title="World-currency support"
+                description="Display-currency preferences, native amounts, and currency-safe reporting."
               />
               <FeatureCard
                 icon={Database}
-                title="Convex-backed data layer"
-                description="Live queries, seeded currency catalog, FX rows, and persisted user preferences."
+                title="Posted ledger history"
+                description="Real purchase posting pipeline with categories, split templates, and ledger lines."
               />
               <FeatureCard
                 icon={ShieldCheck}
-                title="Clerk authentication gate"
-                description="Sign-up/sign-in before app entry, modal UX, and secure session-aware rendering."
+                title="Planning and scenarios"
+                description="Normal/Tight/Recovery month planning, goals, forecast messaging, and fragility views."
+              />
+              <FeatureCard
+                icon={ChartNoAxesCombined}
+                title="Automation and rhythm"
+                description="Daily, weekly, payday, and month-close operating rhythm with smart suggestions."
+              />
+              <FeatureCard
+                icon={Lock}
+                title="Governance and trust"
+                description="Exports, privacy controls, retention/deletion jobs, audit trails, and trust pack controls."
               />
               <FeatureCard
                 icon={Smartphone}
-                title="Installable PWA experience"
-                description="Manifest, service worker, offline shell, app shortcuts, and update prompts."
+                title="PWA reliability + mobile"
+                description="Thumb mode, errand flows, low-signal queueing, and in-app update notifications."
+              />
+              <FeatureCard
+                icon={Download}
+                title="Premium report output"
+                description="Professional print modes, audience presets, variance commentary, and decisions section."
+              />
+              <FeatureCard
+                icon={BriefcaseBusiness}
+                title="Single source of truth"
+                description="Clear Posted/Scheduled/Planned/Estimated policy with confidence indicators on KPIs."
+              />
+              <FeatureCard
+                icon={Check}
+                title="Audit-first mutations"
+                description="Ownership checks, mutation auditing, and timezone-aware financial workflows."
+              />
+              <FeatureCard
+                icon={ChevronRight}
+                title="No demo data path"
+                description="Fresh accounts enter the real dashboard directly with Convex-backed empty states."
               />
             </div>
           </section>
@@ -434,6 +463,7 @@ function SignedOutLanding({
                 <ChecklistRow text="Clerk modal sign-up / sign-in flows are available in header and hero" />
                 <ChecklistRow text="PWA install call-to-action remains available on supported devices" />
                 <ChecklistRow text="Convex-backed app data only loads after authenticated app shell renders" />
+                <ChecklistRow text="In-app updates are surfaced with release details before refresh" />
               </CardContent>
             </Card>
 
@@ -473,51 +503,34 @@ function SignedOutLanding({
             </Card>
           </section>
 
-          <section id="pricing" className="mt-8 space-y-4">
+          <section id="free-access" className="mt-8 space-y-4">
             <SectionHeading
-              eyebrow="Pricing"
-              title="Simple paths to launch"
-              subtitle="Use this as a polished base and extend your product, data model, and billing model from here."
+              eyebrow="Free Access"
+              title="Free to use right now"
+              subtitle="All workspace capabilities are currently available with no pricing tiers on the landing page."
             />
-            <div className="grid gap-4 lg:grid-cols-3">
-              <PricingCard
-                tier="Starter"
-                price="$0"
-                subtitle="Prototype and internal trials"
-                points={[
-                  'Clerk auth gate and landing page',
-                  'Convex-backed dashboard snapshot',
-                  'PWA install flow and updates',
-                ]}
-                ctaLabel="Create account"
-                ctaVariant="outline"
-              />
-              <PricingCard
-                tier="Pro"
-                price="$49"
-                subtitle="Per workspace / month"
-                highlight
-                points={[
-                  'Multi-user workspaces',
-                  'Live bank/feed integrations',
-                  'Scheduled FX refresh + exports',
-                ]}
-                ctaLabel="Start pro setup"
-                ctaVariant="default"
-              />
-              <PricingCard
-                tier="Enterprise"
-                price="Custom"
-                subtitle="Regional teams and controls"
-                points={[
-                  'SSO / SCIM',
-                  'Audit logs + custom retention',
-                  'Deployment and compliance review',
-                ]}
-                ctaLabel="Talk to sales"
-                ctaVariant="outline"
-              />
-            </div>
+            <Card className="finance-panel border-border/70 bg-card/35 shadow-none">
+              <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-foreground">Free plan currently active</p>
+                  <p className="text-sm text-muted-foreground">
+                    Sign up to access all current features: finance tabs, planning, governance,
+                    reporting, mobile PWA, and live Convex sync.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <SignUpButton mode="modal">
+                    <Button>
+                      Create free account
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </SignUpButton>
+                  <SignInButton mode="modal">
+                    <Button variant="outline">Sign in</Button>
+                  </SignInButton>
+                </div>
+              </CardContent>
+            </Card>
           </section>
 
           <section className="mt-8">
@@ -668,63 +681,6 @@ function ChecklistRow({ text }: { text: string }) {
       </span>
       <p className="text-sm text-foreground/90">{text}</p>
     </div>
-  )
-}
-
-function PricingCard({
-  tier,
-  price,
-  subtitle,
-  points,
-  ctaLabel,
-  ctaVariant,
-  highlight = false,
-}: {
-  tier: string
-  price: string
-  subtitle: string
-  points: string[]
-  ctaLabel: string
-  ctaVariant: 'default' | 'outline'
-  highlight?: boolean
-}) {
-  return (
-    <Card
-      className={[
-        'finance-panel border-border/60 bg-card/35 shadow-none',
-        highlight ? 'border-primary/30 bg-primary/8' : '',
-      ].join(' ')}
-    >
-      <CardHeader className="gap-1">
-        <div className="flex items-center justify-between gap-2">
-          <CardTitle className="text-base">{tier}</CardTitle>
-          {highlight ? (
-            <Badge className="bg-primary/20 text-primary hover:bg-primary/20">
-              <BadgeCheck className="h-3.5 w-3.5" />
-              Popular
-            </Badge>
-          ) : null}
-        </div>
-        <p className="finance-display text-2xl">{price}</p>
-        <CardDescription>{subtitle}</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-2">
-          {points.map((point) => (
-            <div key={point} className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Check className="h-4 w-4 text-emerald-300" />
-              <span>{point}</span>
-            </div>
-          ))}
-        </div>
-        <SignUpButton mode="modal">
-          <Button variant={ctaVariant} className="w-full">
-            {ctaLabel}
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        </SignUpButton>
-      </CardContent>
-    </Card>
   )
 }
 
