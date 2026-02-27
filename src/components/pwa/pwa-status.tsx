@@ -7,34 +7,153 @@ import { toast } from 'sonner'
 type PwaUpdateStatus = {
   ready: boolean
   version: number
+  buildId?: string
+  releaseName?: string
+  summary?: string
+  highlights?: string[]
+  publishedAt?: string
 }
 
 const PWA_UPDATE_STATUS_STORAGE_KEY = 'finance-pwa-update-status'
 const PWA_UPDATE_STATUS_EVENT = 'finance:pwa-update-status'
 
 function parseStoredPwaUpdateStatus(raw: string | null): PwaUpdateStatus {
-  if (!raw) return { ready: false, version: 0 }
+  if (!raw) return { ready: false, version: 0, highlights: [] }
   try {
     const parsed = JSON.parse(raw) as unknown
     if (!parsed || typeof parsed !== 'object') {
-      return { ready: false, version: 0 }
+      return { ready: false, version: 0, highlights: [] }
     }
     const ready = parsed && 'ready' in parsed ? Boolean(parsed.ready) : false
     const version =
       parsed && 'version' in parsed && Number.isFinite(Number(parsed.version))
         ? Number(parsed.version)
         : 0
-    return { ready, version }
+    const buildId =
+      parsed && 'buildId' in parsed && typeof parsed.buildId === 'string'
+        ? parsed.buildId.trim()
+        : undefined
+    const releaseName =
+      parsed && 'releaseName' in parsed && typeof parsed.releaseName === 'string'
+        ? parsed.releaseName.trim()
+        : undefined
+    const summary =
+      parsed && 'summary' in parsed && typeof parsed.summary === 'string'
+        ? parsed.summary.trim()
+        : undefined
+    const highlights =
+      parsed && 'highlights' in parsed && Array.isArray(parsed.highlights)
+        ? parsed.highlights
+            .filter((value): value is string => typeof value === 'string')
+            .map((value) => value.trim())
+            .filter(Boolean)
+            .slice(0, 6)
+        : []
+    const publishedAt =
+      parsed && 'publishedAt' in parsed && typeof parsed.publishedAt === 'string'
+        ? parsed.publishedAt.trim()
+        : undefined
+    return {
+      ready,
+      version,
+      buildId,
+      releaseName,
+      summary,
+      highlights,
+      publishedAt,
+    }
   } catch {
-    return { ready: false, version: 0 }
+    return { ready: false, version: 0, highlights: [] }
   }
 }
 
-function writePwaUpdateStatus(ready: boolean): PwaUpdateStatus {
+async function fetchLatestReleaseMetadata() {
+  if (typeof window === 'undefined') {
+    return {
+      buildId: undefined,
+      releaseName: undefined,
+      summary: undefined,
+      highlights: [] as string[],
+      publishedAt: undefined,
+    }
+  }
+
+  try {
+    const response = await fetch('/version.json', {
+      cache: 'no-store',
+      headers: {
+        'cache-control': 'no-cache',
+      },
+    })
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`)
+    }
+    const payload = (await response.json()) as unknown
+    if (!payload || typeof payload !== 'object') {
+      return {
+        buildId: undefined,
+        releaseName: undefined,
+        summary: undefined,
+        highlights: [] as string[],
+        publishedAt: undefined,
+      }
+    }
+    const typed = payload as {
+      buildId?: unknown
+      releaseName?: unknown
+      summary?: unknown
+      highlights?: unknown
+      publishedAt?: unknown
+    }
+    return {
+      buildId:
+        typeof typed.buildId === 'string' && typed.buildId.trim()
+          ? typed.buildId.trim()
+          : undefined,
+      releaseName:
+        typeof typed.releaseName === 'string' && typed.releaseName.trim()
+          ? typed.releaseName.trim()
+          : undefined,
+      summary:
+        typeof typed.summary === 'string' && typed.summary.trim()
+          ? typed.summary.trim()
+          : undefined,
+      highlights: Array.isArray(typed.highlights)
+        ? typed.highlights
+            .filter((value): value is string => typeof value === 'string')
+            .map((value) => value.trim())
+            .filter(Boolean)
+            .slice(0, 6)
+        : [],
+      publishedAt:
+        typeof typed.publishedAt === 'string' && typed.publishedAt.trim()
+          ? typed.publishedAt.trim()
+          : undefined,
+    }
+  } catch {
+    return {
+      buildId: undefined,
+      releaseName: undefined,
+      summary: undefined,
+      highlights: [] as string[],
+      publishedAt: undefined,
+    }
+  }
+}
+
+function writePwaUpdateStatus(
+  ready: boolean,
+  details?: Partial<Omit<PwaUpdateStatus, 'ready' | 'version'>>,
+): PwaUpdateStatus {
   if (typeof window === 'undefined') {
     return {
       ready,
       version: ready ? Date.now() : 0,
+      buildId: details?.buildId,
+      releaseName: details?.releaseName,
+      summary: details?.summary,
+      highlights: details?.highlights ?? [],
+      publishedAt: details?.publishedAt,
     }
   }
 
@@ -44,6 +163,11 @@ function writePwaUpdateStatus(ready: boolean): PwaUpdateStatus {
   const next: PwaUpdateStatus = {
     ready,
     version: ready ? (current.ready ? current.version : Date.now()) : current.version,
+    buildId: ready ? details?.buildId : undefined,
+    releaseName: ready ? details?.releaseName : undefined,
+    summary: ready ? details?.summary : undefined,
+    highlights: ready ? details?.highlights ?? [] : [],
+    publishedAt: ready ? details?.publishedAt : undefined,
   }
 
   try {
@@ -212,12 +336,16 @@ export function PwaUpdateNotifier() {
   const shownOfflineToast = useRef(false)
   const shownUpdateToast = useRef(false)
   const updateToastId = 'pwa-update-available'
+  const [swRegistration, setSwRegistration] = useState<ServiceWorkerRegistration | null>(null)
 
   const {
     needRefresh: [needRefresh],
     offlineReady: [offlineReady],
     updateServiceWorker,
   } = useRegisterSW({
+    onRegisteredSW(_swUrl, registration) {
+      setSwRegistration(registration ?? null)
+    },
     onRegisterError(error) {
       console.error('PWA registration error', error)
     },
@@ -269,41 +397,102 @@ export function PwaUpdateNotifier() {
   }, [claimSharedToastKey, trackEvent, updateServiceWorker])
 
   useEffect(() => {
+    if (!swRegistration) return
+    let mounted = true
+    const checkForUpdate = async (reason: string) => {
+      if (!mounted) return
+      try {
+        await swRegistration.update()
+      } catch (error) {
+        trackEvent({
+          category: 'pwa',
+          eventType: 'update_check_failed',
+          feature: 'service_worker',
+          severity: 'warning',
+          status: 'error',
+          message: `${reason}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        })
+      }
+    }
+
+    void checkForUpdate('registered')
+    const intervalId = window.setInterval(() => {
+      if (document.visibilityState !== 'visible') return
+      void checkForUpdate('interval')
+    }, 90_000)
+    const onOnline = () => {
+      void checkForUpdate('online')
+    }
+    const onFocus = () => {
+      void checkForUpdate('focus')
+    }
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        void checkForUpdate('visible')
+      }
+    }
+    window.addEventListener('online', onOnline)
+    window.addEventListener('focus', onFocus)
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    return () => {
+      mounted = false
+      window.clearInterval(intervalId)
+      window.removeEventListener('online', onOnline)
+      window.removeEventListener('focus', onFocus)
+      document.removeEventListener('visibilitychange', onVisibilityChange)
+    }
+  }, [swRegistration, trackEvent])
+
+  useEffect(() => {
     if (!needRefresh || shownUpdateToast.current) {
       return
     }
 
-    writePwaUpdateStatus(true)
     shownUpdateToast.current = true
-    trackEvent({
-      category: 'pwa',
-      eventType: 'update_available',
-      feature: 'service_worker',
-      status: 'ready',
-    })
-    if (claimSharedToastKey('pwa-update-available', 60_000)) {
-      toast('Update available', {
-        id: updateToastId,
-        duration: Infinity,
-        description: 'A newer version of the dashboard is ready. Refresh now to apply updates.',
-        action: {
-          label: 'Refresh now',
-          onClick: () => {
-            void applyUpdate()
-          },
-        },
-        cancel: {
-          label: 'Later',
-          onClick: () => {
-            trackEvent({
-              category: 'pwa',
-              eventType: 'update_apply_deferred',
-              feature: 'service_worker',
-              status: 'deferred',
-            })
-          },
-        },
+    let cancelled = false
+
+    void (async () => {
+      const metadata = await fetchLatestReleaseMetadata()
+      if (cancelled) return
+      const status = writePwaUpdateStatus(true, metadata)
+      trackEvent({
+        category: 'pwa',
+        eventType: 'update_available',
+        feature: 'service_worker',
+        status: 'ready',
       })
+      if (claimSharedToastKey('pwa-update-available', 60_000)) {
+        const details =
+          status.summary ||
+          status.highlights?.[0] ||
+          'A newer version of the dashboard is ready. Refresh now to apply updates.'
+        toast(status.releaseName ? `Update available: ${status.releaseName}` : 'Update available', {
+          id: updateToastId,
+          duration: Infinity,
+          description: details,
+          action: {
+            label: 'Refresh now',
+            onClick: () => {
+              void applyUpdate()
+            },
+          },
+          cancel: {
+            label: 'Later',
+            onClick: () => {
+              trackEvent({
+                category: 'pwa',
+                eventType: 'update_apply_deferred',
+                feature: 'service_worker',
+                status: 'deferred',
+              })
+            },
+          },
+        })
+      }
+    })()
+
+    return () => {
+      cancelled = true
     }
   }, [applyUpdate, claimSharedToastKey, needRefresh, trackEvent])
 

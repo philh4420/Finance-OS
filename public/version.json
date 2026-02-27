@@ -1,0 +1,12 @@
+{
+  "buildId": "2026.02.27.1",
+  "releaseName": "Realtime Update + Notification Dedupe",
+  "publishedAt": "2026-02-27T14:40:00Z",
+  "summary": "Live in-session update checks are now enabled, notifications are deduped, and update alerts include release details.",
+  "highlights": [
+    "PWA now checks for updates while the app stays open (online, focus, and periodic checks).",
+    "Users can still choose when to apply updates via the existing Refresh action.",
+    "Notification bell now uses deduped notification IDs to avoid repeated alerts.",
+    "Operations center now shows update release details and highlights."
+  ]
+}

@@ -152,48 +152,121 @@ function parseStoredRecentWorkspaceTabs(raw: string | null): WorkspaceTabKey[] {
 type PwaUpdateStatus = {
   ready: boolean
   version: number
+  buildId?: string
+  releaseName?: string
+  summary?: string
+  highlights?: string[]
+  publishedAt?: string
 }
 
 const PWA_UPDATE_STATUS_STORAGE_KEY = 'finance-pwa-update-status'
-const PWA_UPDATE_STATUS_READ_VERSION_KEY = 'finance-pwa-update-read-version'
 const PWA_UPDATE_STATUS_EVENT = 'finance:pwa-update-status'
-const NOTIFICATION_READ_SIGNATURE_KEY = 'finance-notification-read-signature'
+const NOTIFICATION_READ_IDS_STORAGE_KEY = 'finance-notification-read-ids-v2'
 const REFERENCE_DATA_BOOTSTRAP_STORAGE_KEY = 'finance-reference-data-bootstrap-v2'
 
 function parseStoredPwaUpdateStatus(raw: string | null): PwaUpdateStatus {
-  if (!raw) return { ready: false, version: 0 }
+  if (!raw) return { ready: false, version: 0, highlights: [] }
   try {
     const parsed = JSON.parse(raw) as unknown
     if (!parsed || typeof parsed !== 'object') {
-      return { ready: false, version: 0 }
+      return { ready: false, version: 0, highlights: [] }
     }
     const ready = parsed && 'ready' in parsed ? Boolean(parsed.ready) : false
     const version =
       parsed && 'version' in parsed && Number.isFinite(Number(parsed.version))
         ? Number(parsed.version)
         : 0
-    return { ready, version }
+    const buildId =
+      parsed && 'buildId' in parsed && typeof parsed.buildId === 'string'
+        ? parsed.buildId.trim()
+        : undefined
+    const releaseName =
+      parsed && 'releaseName' in parsed && typeof parsed.releaseName === 'string'
+        ? parsed.releaseName.trim()
+        : undefined
+    const summary =
+      parsed && 'summary' in parsed && typeof parsed.summary === 'string'
+        ? parsed.summary.trim()
+        : undefined
+    const highlights =
+      parsed && 'highlights' in parsed && Array.isArray(parsed.highlights)
+        ? parsed.highlights
+            .filter((value): value is string => typeof value === 'string')
+            .map((value) => value.trim())
+            .filter(Boolean)
+            .slice(0, 6)
+        : []
+    const publishedAt =
+      parsed && 'publishedAt' in parsed && typeof parsed.publishedAt === 'string'
+        ? parsed.publishedAt.trim()
+        : undefined
+    return { ready, version, buildId, releaseName, summary, highlights, publishedAt }
   } catch {
-    return { ready: false, version: 0 }
+    return { ready: false, version: 0, highlights: [] }
   }
 }
 
-function parseStoredUpdateReadVersion(raw: string | null): number {
-  const parsed = Number(raw)
-  if (!Number.isFinite(parsed) || parsed < 0) return 0
-  return parsed
+function parseStoredNotificationReadIds(raw: string | null): string[] {
+  if (!raw) return []
+  try {
+    const parsed = JSON.parse(raw) as unknown
+    if (!Array.isArray(parsed)) return []
+    return parsed
+      .filter((value): value is string => typeof value === 'string')
+      .map((value) => value.trim())
+      .filter(Boolean)
+      .slice(-256)
+  } catch {
+    return []
+  }
 }
 
 function normalizePwaUpdateStatusPayload(payload: unknown): PwaUpdateStatus | null {
   if (!payload || typeof payload !== 'object') return null
-  const candidate = payload as { ready?: unknown; version?: unknown }
+  const candidate = payload as {
+    ready?: unknown
+    version?: unknown
+    buildId?: unknown
+    releaseName?: unknown
+    summary?: unknown
+    highlights?: unknown
+    publishedAt?: unknown
+  }
   if (typeof candidate.ready !== 'boolean') return null
   const parsedVersion = Number(candidate.version)
   if (!Number.isFinite(parsedVersion) || parsedVersion < 0) return null
   return {
     ready: candidate.ready,
     version: parsedVersion,
+    buildId:
+      typeof candidate.buildId === 'string' && candidate.buildId.trim()
+        ? candidate.buildId.trim()
+        : undefined,
+    releaseName:
+      typeof candidate.releaseName === 'string' && candidate.releaseName.trim()
+        ? candidate.releaseName.trim()
+        : undefined,
+    summary:
+      typeof candidate.summary === 'string' && candidate.summary.trim()
+        ? candidate.summary.trim()
+        : undefined,
+    highlights: Array.isArray(candidate.highlights)
+      ? candidate.highlights
+          .filter((value): value is string => typeof value === 'string')
+          .map((value) => value.trim())
+          .filter(Boolean)
+          .slice(0, 6)
+      : [],
+    publishedAt:
+      typeof candidate.publishedAt === 'string' && candidate.publishedAt.trim()
+        ? candidate.publishedAt.trim()
+        : undefined,
   }
+}
+
+function mergeNotificationReadIds(current: string[], ids: string[]) {
+  const merged = Array.from(new Set([...current, ...ids]))
+  return merged.slice(-256)
 }
 
 function buildFallbackCurrencyOptions() {
@@ -491,31 +564,23 @@ export function FinanceDashboard({
   const [showCommandPalette, setShowCommandPalette] = useState(false)
   const [commandSearchQuery, setCommandSearchQuery] = useState('')
   const [pwaUpdateStatus, setPwaUpdateStatus] = useState<PwaUpdateStatus>(() => {
-    if (typeof window === 'undefined') return { ready: false, version: 0 }
+    if (typeof window === 'undefined') return { ready: false, version: 0, highlights: [] }
     try {
       return parseStoredPwaUpdateStatus(
         window.localStorage.getItem(PWA_UPDATE_STATUS_STORAGE_KEY),
       )
     } catch {
-      return { ready: false, version: 0 }
+      return { ready: false, version: 0, highlights: [] }
     }
   })
-  const [pwaUpdateReadVersion, setPwaUpdateReadVersion] = useState<number>(() => {
-    if (typeof window === 'undefined') return 0
+  const [readNotificationIds, setReadNotificationIds] = useState<string[]>(() => {
+    if (typeof window === 'undefined') return []
     try {
-      return parseStoredUpdateReadVersion(
-        window.localStorage.getItem(PWA_UPDATE_STATUS_READ_VERSION_KEY),
+      return parseStoredNotificationReadIds(
+        window.localStorage.getItem(NOTIFICATION_READ_IDS_STORAGE_KEY),
       )
     } catch {
-      return 0
-    }
-  })
-  const [notificationReadSignature, setNotificationReadSignature] = useState<string>(() => {
-    if (typeof window === 'undefined') return ''
-    try {
-      return window.localStorage.getItem(NOTIFICATION_READ_SIGNATURE_KEY) ?? ''
-    } catch {
-      return ''
+      return []
     }
   })
   const [recentWorkspaceTabs, setRecentWorkspaceTabs] = useState<WorkspaceTabKey[]>(() => {
@@ -604,24 +669,13 @@ export function FinanceDashboard({
   useEffect(() => {
     try {
       window.localStorage.setItem(
-        PWA_UPDATE_STATUS_READ_VERSION_KEY,
-        String(pwaUpdateReadVersion),
+        NOTIFICATION_READ_IDS_STORAGE_KEY,
+        JSON.stringify(readNotificationIds),
       )
     } catch {
       // Ignore storage access failures.
     }
-  }, [pwaUpdateReadVersion])
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(
-        NOTIFICATION_READ_SIGNATURE_KEY,
-        notificationReadSignature,
-      )
-    } catch {
-      // Ignore storage access failures.
-    }
-  }, [notificationReadSignature])
+  }, [readNotificationIds])
 
   useEffect(() => {
     try {
@@ -742,12 +796,8 @@ export function FinanceDashboard({
         setPwaUpdateStatus(parseStoredPwaUpdateStatus(event.newValue))
       }
 
-      if (event.key === PWA_UPDATE_STATUS_READ_VERSION_KEY) {
-        setPwaUpdateReadVersion(parseStoredUpdateReadVersion(event.newValue))
-      }
-
-      if (event.key === NOTIFICATION_READ_SIGNATURE_KEY) {
-        setNotificationReadSignature(event.newValue ?? '')
+      if (event.key === NOTIFICATION_READ_IDS_STORAGE_KEY) {
+        setReadNotificationIds(parseStoredNotificationReadIds(event.newValue))
       }
 
       if (event.key === 'finance-display-currency') {
@@ -901,7 +951,17 @@ export function FinanceDashboard({
   const queuedItemCount = offlineIntents.length + telemetryQueueCount
   const lowSignalMode = lowSignalModeOverride || !isOnline || queuedItemCount > 0
   const pwaUpdateReady = pwaUpdateStatus.ready
-  const pwaUpdateUnread = pwaUpdateReady && pwaUpdateStatus.version > pwaUpdateReadVersion
+  const pwaUpdateNotificationId = pwaUpdateReady
+    ? `pwa-update-${pwaUpdateStatus.version}`
+    : null
+  const pwaUpdateUnread = pwaUpdateNotificationId
+    ? !readNotificationIds.includes(pwaUpdateNotificationId)
+    : false
+  const pwaReleaseLabel = pwaUpdateStatus.releaseName || pwaUpdateStatus.buildId || null
+  const pwaReleaseSummary =
+    pwaUpdateStatus.summary ||
+    pwaUpdateStatus.highlights?.[0] ||
+    'A newer version is ready. Refresh to apply updates.'
   const syncStateLabel = !isOnline
     ? 'Offline'
     : isFlushing
@@ -937,24 +997,83 @@ export function FinanceDashboard({
     (sum, item) => sum + item.amount,
     0,
   )
-  const operationsAlertCount =
-    overdueObligations.length +
-    dueSoonObligations.length +
-    queuedItemCount +
-    (pwaUpdateUnread ? 1 : 0)
-  const notificationSignature = [
-    overdueObligations.length,
-    dueSoonObligations.length,
-    offlineIntents.length,
-    telemetryQueueCount,
-    pwaUpdateStatus.ready ? pwaUpdateStatus.version : 0,
-  ].join(':')
-  const notificationsUnread =
-    operationsAlertCount > 0 && notificationReadSignature !== notificationSignature
-  const notificationsBadgeCount = notificationsUnread ? operationsAlertCount : 0
+  const operationNotifications = [
+    ...(pwaUpdateReady
+      ? [
+          {
+            id: `pwa-update-${pwaUpdateStatus.version}`,
+            title: pwaReleaseLabel ? `New version ready: ${pwaReleaseLabel}` : 'New version ready',
+            detail: pwaReleaseSummary,
+            tone: 'warning' as const,
+          },
+        ]
+      : []),
+    ...(!isOnline
+      ? [
+          {
+            id: 'connection-offline',
+            title: 'Connection offline',
+            detail: 'Queueing actions locally until the connection is restored.',
+            tone: 'warning' as const,
+          },
+        ]
+      : []),
+    ...(offlineIntents.length > 0
+      ? [
+          {
+            id: 'queue-offline-intents',
+            title: 'Queued actions pending',
+            detail: `${offlineIntents.length} action${offlineIntents.length === 1 ? '' : 's'} waiting to sync.`,
+            tone: 'warning' as const,
+          },
+        ]
+      : []),
+    ...(telemetryQueueCount > 0
+      ? [
+          {
+            id: 'queue-telemetry',
+            title: 'Queued telemetry pending',
+            detail: `${telemetryQueueCount} telemetry event${telemetryQueueCount === 1 ? '' : 's'} pending upload.`,
+            tone: 'neutral' as const,
+          },
+        ]
+      : []),
+    ...overdueObligations.map((item) => ({
+      id: `overdue-${item.id}-${item.due}`,
+      title: `Overdue: ${item.name}`,
+      detail: `Due date was ${item.due}.`,
+      tone: 'warning' as const,
+    })),
+    ...dueSoonObligations.map((item) => ({
+      id: `due-soon-${item.id}-${item.due}`,
+      title: `Due soon: ${item.name}`,
+      detail: `Due ${item.due}.`,
+      tone: 'neutral' as const,
+    })),
+  ]
+  const operationNotificationIds = operationNotifications.map((item) => item.id)
+  const unreadNotificationItems = operationNotifications.filter(
+    (item) => !readNotificationIds.includes(item.id),
+  )
+  const notificationsBadgeCount = unreadNotificationItems.length
   const recentWorkspaceChips = recentWorkspaceTabs
     .map((tab) => workspaceSections.find((section) => section.id === tab))
     .filter((section): section is (typeof workspaceSections)[number] => Boolean(section))
+  const operationNotificationSignature = operationNotificationIds.join('|')
+
+  useEffect(() => {
+    if (!readNotificationIds.length) return
+    const activeIds = new Set(
+      operationNotificationSignature ? operationNotificationSignature.split('|') : [],
+    )
+    setReadNotificationIds((current) => {
+      const next = current.filter((id) => activeIds.has(id))
+      if (next.length === current.length && next.every((id, index) => id === current[index])) {
+        return current
+      }
+      return next
+    })
+  }, [operationNotificationSignature, readNotificationIds.length])
 
   const setSearchInputValue = (nextValue: string) => {
     startTransition(() => setSearchValue(nextValue))
@@ -984,10 +1103,9 @@ export function FinanceDashboard({
   }
 
   const openOperationsCenter = () => {
-    setNotificationReadSignature(notificationSignature)
-    if (pwaUpdateUnread) {
-      setPwaUpdateReadVersion(pwaUpdateStatus.version)
-    }
+    setReadNotificationIds((current) =>
+      mergeNotificationReadIds(current, operationNotificationIds),
+    )
     setShowOperationsCenter(true)
   }
 
@@ -2345,14 +2463,28 @@ export function FinanceDashboard({
                   <StatusRow
                     icon={Download}
                     label="App version"
-                    value={pwaUpdateReady ? 'New version ready' : 'Up to date'}
+                    value={
+                      pwaUpdateReady
+                        ? pwaReleaseLabel
+                          ? `New version · ${pwaReleaseLabel}`
+                          : 'New version ready'
+                        : 'Up to date'
+                    }
                     tone={pwaUpdateReady ? 'warning' : 'positive'}
                   />
                   {pwaUpdateReady ? (
-                    <p className="text-xs text-muted-foreground">
-                      Open the update toast and choose <span className="font-medium text-foreground">Refresh now</span>{' '}
-                      to apply the latest PWA build.
-                    </p>
+                    <div className="space-y-1 rounded-lg border border-border/60 bg-background/35 p-2.5">
+                      <p className="text-xs text-muted-foreground">
+                        {pwaReleaseSummary}
+                      </p>
+                      {pwaUpdateStatus.highlights && pwaUpdateStatus.highlights.length > 0 ? (
+                        <ul className="space-y-1 pl-3 text-xs text-muted-foreground list-disc">
+                          {pwaUpdateStatus.highlights.slice(0, 3).map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      ) : null}
+                    </div>
                   ) : null}
                   <div className="pt-1">
                     <Button
@@ -2364,6 +2496,48 @@ export function FinanceDashboard({
                       {isFlushing ? 'Syncing...' : 'Flush now'}
                     </Button>
                   </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-border/70 bg-card/45 shadow-none">
+                <CardHeader className="gap-1 pb-3">
+                  <CardTitle className="text-sm">Notifications</CardTitle>
+                  <CardDescription>
+                    Deduped inbox for current operational alerts and update messages.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {operationNotifications.length > 0 ? (
+                    operationNotifications.map((item) => {
+                      const unread = !readNotificationIds.includes(item.id)
+                      return (
+                        <div
+                          key={item.id}
+                          className="rounded-lg border border-border/60 bg-background/40 px-3 py-2.5"
+                        >
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <p className="text-sm font-medium">{item.title}</p>
+                            <Badge
+                              variant="outline"
+                              className={cn(
+                                'h-5 rounded-full px-1.5 text-[10px]',
+                                item.tone === 'warning'
+                                  ? 'border-amber-400/45 bg-amber-500/12 text-amber-200'
+                                  : 'border-border/65 bg-card/55 text-muted-foreground',
+                              )}
+                            >
+                              {unread ? 'New' : 'Read'}
+                            </Badge>
+                          </div>
+                          <p className="mt-1 text-xs text-muted-foreground">{item.detail}</p>
+                        </div>
+                      )
+                    })
+                  ) : (
+                    <div className="rounded-xl border border-dashed border-border/60 px-3 py-6 text-center text-xs text-muted-foreground">
+                      No active notifications right now.
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
