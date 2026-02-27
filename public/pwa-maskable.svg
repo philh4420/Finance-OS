@@ -1,0 +1,22 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="rg1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(128 84) rotate(43.3634) scale(465.663 402.367)">
+      <stop stop-color="#28B3FF" />
+      <stop offset="0.45" stop-color="#28E4C3" />
+      <stop offset="1" stop-color="#0A141E" />
+    </radialGradient>
+    <linearGradient id="g2" x1="128" y1="352" x2="396" y2="180" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5FBFF" />
+      <stop offset="1" stop-color="#C8F7FF" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="132" fill="#06101A" />
+  <rect x="20" y="20" width="472" height="472" rx="112" fill="url(#rg1)" opacity="0.3" />
+  <path d="M124 334C160 334 160 274 196 274C232 274 232 224 268 224C304 224 304 176 340 176H388" stroke="url(#g2)" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M352 140L388 176L352 212" stroke="#EAFBFF" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M122 146C122 125.013 139.013 108 160 108H352C372.987 108 390 125.013 390 146V366C390 386.987 372.987 404 352 404H160C139.013 404 122 386.987 122 366V146Z" stroke="white" stroke-opacity="0.12" stroke-width="8"/>
+  <circle cx="142" cy="334" r="17" fill="#31E2C8"/>
+  <circle cx="214" cy="274" r="17" fill="#31E2C8"/>
+  <circle cx="286" cy="224" r="17" fill="#31E2C8"/>
+  <circle cx="358" cy="176" r="17" fill="#31E2C8"/>
+</svg>

@@ -1,0 +1,1911 @@
+{
+  "generatedAt": "2026-02-25T16:37:39.772Z",
+  "sources": {
+    "dryRunLogPath": "/tmp/convex-prod-dryrun.log",
+    "devExportTablesPath": "/tmp/finance-convex-export/_tables/documents.jsonl"
+  },
+  "tableCount": 47,
+  "tables": [
+    {
+      "tableName": "accountReconciliationChecks",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_accountId_cycleMonth",
+          "fields": [
+            "userId",
+            "accountId",
+            "cycleMonth",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "accountId",
+            "cycleMonth"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_cycleMonth_createdAt",
+          "fields": [
+            "userId",
+            "cycleMonth",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "cycleMonth",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "accounts",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "accountTransfers",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_destinationAccountId_createdAt",
+          "fields": [
+            "userId",
+            "destinationAccountId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "destinationAccountId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_sourceAccountId_createdAt",
+          "fields": [
+            "userId",
+            "sourceAccountId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "sourceAccountId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_transferDate",
+          "fields": [
+            "userId",
+            "transferDate",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "transferDate"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "billPaymentChecks",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_billId_cycleMonth",
+          "fields": [
+            "userId",
+            "billId",
+            "cycleMonth",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "billId",
+            "cycleMonth"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "bills",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_category",
+          "fields": [
+            "userId",
+            "category",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "category"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_linkedAccountId",
+          "fields": [
+            "userId",
+            "linkedAccountId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "linkedAccountId"
+          ]
+        },
+        {
+          "name": "by_userId_scope",
+          "fields": [
+            "userId",
+            "scope",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "scope"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "cards",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "clientOpsMetrics",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "consentLogs",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "consentSettings",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "currencyCatalog",
+      "indexes": [
+        {
+          "name": "by_code",
+          "fields": [
+            "code",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "local_analysis",
+          "fieldsWithoutCreationTime": [
+            "code"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "cycleAuditLogs",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_ranAt",
+          "fields": [
+            "userId",
+            "ranAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "ranAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "cycleStepAlerts",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_cycleKey_createdAt",
+          "fields": [
+            "userId",
+            "cycleKey",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "cycleKey",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "dashboardPreferences",
+      "indexes": [
+        {
+          "name": "by_owner",
+          "fields": [
+            "ownerKey",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "local_analysis",
+          "fieldsWithoutCreationTime": [
+            "ownerKey"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "dashboardSnapshots",
+      "indexes": [
+        {
+          "name": "by_owner",
+          "fields": [
+            "ownerKey",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "local_analysis",
+          "fieldsWithoutCreationTime": [
+            "ownerKey"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "dashboardStates",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "deletionJobs",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "envelopeBudgets",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_month",
+          "fields": [
+            "userId",
+            "month",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "month"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "financeAuditEvents",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_entityType_createdAt",
+          "fields": [
+            "userId",
+            "entityType",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "entityType",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "financePreferences",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "fxRates",
+      "indexes": [
+        {
+          "name": "by_pairKey",
+          "fields": [
+            "pairKey",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "local_analysis",
+          "fieldsWithoutCreationTime": [
+            "pairKey"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "goalEvents",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_goalId_createdAt",
+          "fields": [
+            "userId",
+            "goalId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "goalId",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "goals",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "incomeAllocationRules",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_target",
+          "fields": [
+            "userId",
+            "target",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "target"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "incomeAllocationSuggestions",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_month",
+          "fields": [
+            "userId",
+            "month",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "month"
+          ]
+        },
+        {
+          "name": "by_userId_month_target",
+          "fields": [
+            "userId",
+            "month",
+            "target",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "month",
+            "target"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "incomeChangeEvents",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_incomeId_effectiveDate",
+          "fields": [
+            "userId",
+            "incomeId",
+            "effectiveDate",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "incomeId",
+            "effectiveDate"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "incomePaymentChecks",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_cycleMonth",
+          "fields": [
+            "userId",
+            "cycleMonth",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "cycleMonth"
+          ]
+        },
+        {
+          "name": "by_userId_incomeId_cycleMonth",
+          "fields": [
+            "userId",
+            "incomeId",
+            "cycleMonth",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "incomeId",
+            "cycleMonth"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "incomes",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_destinationAccountId",
+          "fields": [
+            "userId",
+            "destinationAccountId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "destinationAccountId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "ledgerEntries",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_cycleKey",
+          "fields": [
+            "userId",
+            "cycleKey",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "cycleKey"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "ledgerLines",
+      "indexes": [
+        {
+          "name": "by_entryId",
+          "fields": [
+            "entryId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "entryId"
+          ]
+        },
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "loanCycleAuditEntries",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_cycleKey_createdAt",
+          "fields": [
+            "userId",
+            "cycleKey",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "cycleKey",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_loanId_createdAt",
+          "fields": [
+            "userId",
+            "loanId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "loanId",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "loanEvents",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_loanId_createdAt",
+          "fields": [
+            "userId",
+            "loanId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "loanId",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "loans",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "monthCloseSnapshots",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_cycleKey",
+          "fields": [
+            "userId",
+            "cycleKey",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "cycleKey"
+          ]
+        },
+        {
+          "name": "by_userId_ranAt",
+          "fields": [
+            "userId",
+            "ranAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "ranAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "monthlyCycleRuns",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_cycleKey",
+          "fields": [
+            "userId",
+            "cycleKey",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "cycleKey"
+          ]
+        },
+        {
+          "name": "by_userId_idempotencyKey",
+          "fields": [
+            "userId",
+            "idempotencyKey",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "idempotencyKey"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "personalFinanceStates",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "planningActionTasks",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_month_createdAt",
+          "fields": [
+            "userId",
+            "month",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "month",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_month_status",
+          "fields": [
+            "userId",
+            "month",
+            "status",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "month",
+            "status"
+          ]
+        },
+        {
+          "name": "by_userId_month_versionKey",
+          "fields": [
+            "userId",
+            "month",
+            "versionKey",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "month",
+            "versionKey"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "planningMonthVersions",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_month",
+          "fields": [
+            "userId",
+            "month",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "month"
+          ]
+        },
+        {
+          "name": "by_userId_month_isSelected",
+          "fields": [
+            "userId",
+            "month",
+            "isSelected",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "month",
+            "isSelected"
+          ]
+        },
+        {
+          "name": "by_userId_month_versionKey",
+          "fields": [
+            "userId",
+            "month",
+            "versionKey",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "month",
+            "versionKey"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "purchaseMonthCloseRuns",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_idempotencyKey",
+          "fields": [
+            "userId",
+            "idempotencyKey",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "idempotencyKey"
+          ]
+        },
+        {
+          "name": "by_userId_monthKey",
+          "fields": [
+            "userId",
+            "monthKey",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "monthKey"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "purchases",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "purchaseSplits",
+      "indexes": [
+        {
+          "name": "by_purchaseId",
+          "fields": [
+            "purchaseId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "purchaseId"
+          ]
+        },
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "purchaseSplitTemplates",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "retentionPolicies",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_policyKey",
+          "fields": [
+            "userId",
+            "policyKey",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "policyKey"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "settingsProfiles",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_nameNormalized",
+          "fields": [
+            "userId",
+            "nameNormalized",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "nameNormalized"
+          ]
+        },
+        {
+          "name": "by_userId_updatedAt",
+          "fields": [
+            "userId",
+            "updatedAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "updatedAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "subscriptionPriceChanges",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_billId_createdAt",
+          "fields": [
+            "userId",
+            "billId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "billId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "transactionRules",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "userExportDownloads",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_downloadedAt",
+          "fields": [
+            "userId",
+            "downloadedAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "downloadedAt"
+          ]
+        },
+        {
+          "name": "by_userId_exportId_downloadedAt",
+          "fields": [
+            "userId",
+            "exportId",
+            "downloadedAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "exportId",
+            "downloadedAt"
+          ]
+        }
+      ]
+    },
+    {
+      "tableName": "userExports",
+      "indexes": [
+        {
+          "name": "by_userId",
+          "fields": [
+            "userId",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId"
+          ]
+        },
+        {
+          "name": "by_userId_createdAt",
+          "fields": [
+            "userId",
+            "createdAt",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "createdAt"
+          ]
+        },
+        {
+          "name": "by_userId_status",
+          "fields": [
+            "userId",
+            "status",
+            "_creationTime"
+          ],
+          "staged": false,
+          "source": "removed_index_diff",
+          "fieldsWithoutCreationTime": [
+            "userId",
+            "status"
+          ]
+        }
+      ]
+    }
+  ]
+}

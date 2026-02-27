@@ -1,0 +1,401 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 0.95rem;
+  --background: oklch(0.975 0.008 251);
+  --foreground: oklch(0.19 0.018 252);
+  --card: oklch(0.995 0.006 252 / 0.98);
+  --card-foreground: oklch(0.2 0.018 252);
+  --popover: oklch(0.998 0.004 252 / 0.99);
+  --popover-foreground: oklch(0.19 0.018 252);
+  --primary: oklch(0.56 0.2 244);
+  --primary-foreground: oklch(0.985 0.003 252);
+  --secondary: oklch(0.93 0.012 250);
+  --secondary-foreground: oklch(0.23 0.018 252);
+  --muted: oklch(0.925 0.01 250 / 0.85);
+  --muted-foreground: oklch(0.39 0.02 251);
+  --accent: oklch(0.92 0.02 238 / 0.94);
+  --accent-foreground: oklch(0.21 0.02 252);
+  --destructive: oklch(0.62 0.23 27);
+  --border: oklch(0.82 0.015 252 / 0.72);
+  --input: oklch(0.86 0.015 252 / 0.8);
+  --ring: oklch(0.58 0.18 243);
+  --chart-1: oklch(0.69 0.17 239);
+  --chart-2: oklch(0.74 0.16 174);
+  --chart-3: oklch(0.76 0.13 90);
+  --chart-4: oklch(0.67 0.21 320);
+  --chart-5: oklch(0.76 0.17 63);
+  --sidebar: oklch(0.94 0.014 250 / 0.96);
+  --sidebar-foreground: oklch(0.2 0.018 252);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: oklch(0.9 0.018 248 / 0.95);
+  --sidebar-accent-foreground: oklch(0.22 0.02 252);
+  --sidebar-border: oklch(0.8 0.015 252 / 0.72);
+  --sidebar-ring: var(--ring);
+}
+
+.dark {
+  --background: oklch(0.16 0.017 252);
+  --foreground: oklch(0.96 0.006 248);
+  --card: oklch(0.2 0.015 252 / 0.92);
+  --card-foreground: oklch(0.96 0.006 248);
+  --popover: oklch(0.19 0.015 252 / 0.97);
+  --popover-foreground: oklch(0.97 0.005 248);
+  --primary: oklch(0.72 0.16 233);
+  --primary-foreground: oklch(0.17 0.01 252);
+  --secondary: oklch(0.24 0.012 252 / 0.8);
+  --secondary-foreground: oklch(0.95 0.005 248);
+  --muted: oklch(0.24 0.01 252 / 0.72);
+  --muted-foreground: oklch(0.74 0.015 248);
+  --accent: oklch(0.26 0.015 240 / 0.85);
+  --accent-foreground: oklch(0.96 0.005 248);
+  --destructive: oklch(0.72 0.19 24);
+  --border: oklch(1 0 0 / 0.09);
+  --input: oklch(1 0 0 / 0.07);
+  --ring: oklch(0.75 0.13 232);
+  --chart-1: oklch(0.74 0.16 233);
+  --chart-2: oklch(0.79 0.16 171);
+  --chart-3: oklch(0.81 0.14 89);
+  --chart-4: oklch(0.73 0.2 319);
+  --chart-5: oklch(0.84 0.14 62);
+  --sidebar: oklch(0.2 0.014 252 / 0.88);
+  --sidebar-foreground: oklch(0.96 0.006 248);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: oklch(0.24 0.012 252 / 0.82);
+  --sidebar-accent-foreground: oklch(0.96 0.006 248);
+  --sidebar-border: oklch(1 0 0 / 0.08);
+  --sidebar-ring: var(--ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  html {
+    color-scheme: light dark;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
+    background-image:
+      radial-gradient(circle at 8% -8%, color-mix(in oklab, var(--color-chart-1) 18%, transparent), transparent 45%),
+      radial-gradient(circle at 100% 0%, color-mix(in oklab, var(--color-chart-2) 16%, transparent), transparent 42%),
+      linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--color-background) 92%, white) 0%,
+        var(--color-background) 100%
+      );
+    background-attachment: fixed;
+  }
+
+  button,
+  input {
+    font: inherit;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-primary) 34%, transparent);
+    color: var(--color-foreground);
+  }
+}
+
+@layer components {
+  .finance-display {
+    font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  .finance-panel {
+    @apply rounded-2xl border border-border/65 bg-card/78 backdrop-blur-xl;
+    box-shadow:
+      inset 0 1px 0 color-mix(in oklab, white 28%, transparent),
+      0 20px 60px color-mix(in oklab, black 22%, transparent);
+  }
+
+  .finance-grid {
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in oklab, var(--color-foreground) 6%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklab, var(--color-foreground) 5%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 48px 48px;
+    mask-image: radial-gradient(circle at 50% 35%, black, transparent 82%);
+  }
+
+  .finance-thumb-mode .finance-panel {
+    border-radius: 1rem;
+  }
+
+  .finance-thumb-mode .finance-panel .p-4,
+  .finance-thumb-mode .finance-panel .px-4,
+  .finance-thumb-mode .finance-panel .py-4 {
+    padding: 0.75rem;
+  }
+
+  .finance-thumb-mode .finance-panel .text-base {
+    font-size: 0.95rem;
+  }
+
+  .finance-low-signal-mode .finance-panel {
+    box-shadow:
+      inset 0 1px 0 color-mix(in oklab, white 18%, transparent),
+      0 0 0 1px rgba(245, 158, 11, 0.22),
+      0 12px 28px color-mix(in oklab, black 20%, transparent);
+  }
+}
+
+html:not(.dark) body {
+  color-scheme: light;
+  background-image:
+    radial-gradient(circle at 8% -8%, rgba(37, 99, 235, 0.1), transparent 46%),
+    radial-gradient(circle at 100% 0%, rgba(13, 148, 136, 0.08), transparent 48%),
+    linear-gradient(180deg, rgba(249, 252, 255, 0.98), rgba(238, 245, 252, 0.98));
+}
+
+html:not(.dark) .finance-panel {
+  border-color: rgba(30, 41, 59, 0.14);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, white 95%, var(--color-card) 5%),
+    color-mix(in oklab, white 90%, var(--color-card) 10%)
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.96),
+    0 10px 28px rgba(30, 64, 175, 0.09),
+    0 2px 10px rgba(15, 23, 42, 0.05);
+}
+
+html:not(.dark) .finance-grid {
+  opacity: 0.44;
+  background-size: 56px 56px;
+}
+
+html:not(.dark) [class*="text-emerald-"] {
+  color: rgb(5 120 87) !important;
+}
+
+html:not(.dark) [class*="text-amber-"] {
+  color: rgb(146 64 14) !important;
+}
+
+html:not(.dark) [class*="text-rose-"] {
+  color: rgb(190 24 93) !important;
+}
+
+html:not(.dark) [class*="bg-emerald-500/"] {
+  background-color: rgba(16, 185, 129, 0.14) !important;
+}
+
+html:not(.dark) [class*="bg-amber-500/"] {
+  background-color: rgba(245, 158, 11, 0.14) !important;
+}
+
+html:not(.dark) [class*="border-emerald-"] {
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+html:not(.dark) [class*="border-amber-"] {
+  border-color: rgba(217, 119, 6, 0.38) !important;
+}
+
+html.dark .finance-panel {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 20px 60px rgba(3, 8, 16, 0.28);
+}
+
+.print-report-shell {
+  display: none;
+}
+
+.print-report-root {
+  --report-accent-rgb: 29 78 216;
+  --report-ink: #0f172a;
+  --report-border: #e2e8f0;
+  --report-surface: #ffffff;
+  --report-surface-alt: #f8fafc;
+  --report-body-font: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --report-title-font: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  color: var(--report-ink);
+  font-family: var(--report-body-font);
+}
+
+.print-report-root h1,
+.print-report-root h2,
+.print-report-root h3 {
+  font-family: var(--report-title-font);
+}
+
+.print-report-root .print-report-header-bg {
+  background:
+    radial-gradient(circle at 10% 0%, rgb(var(--report-accent-rgb) / 0.14), transparent 46%),
+    radial-gradient(circle at 100% 0%, rgb(var(--report-accent-rgb) / 0.11), transparent 48%);
+}
+
+.print-report-root .print-report-section,
+.print-report-root header,
+.print-report-root footer,
+.print-report-root table,
+.print-report-root td,
+.print-report-root th {
+  border-color: var(--report-border);
+}
+
+.print-report-root .print-report-section,
+.print-report-root header,
+.print-report-root footer {
+  background: var(--report-surface);
+}
+
+.print-theme-executive-cobalt {
+  --report-accent-rgb: 29 78 216;
+  --report-border: #cbd5e1;
+  --report-surface: #ffffff;
+  --report-surface-alt: #f8fbff;
+}
+
+.print-theme-household-sage {
+  --report-accent-rgb: 13 148 136;
+  --report-border: #c9d9d5;
+  --report-surface: #ffffff;
+  --report-surface-alt: #f7fbfa;
+}
+
+.print-theme-graphite-ledger {
+  --report-accent-rgb: 55 65 81;
+  --report-border: #d1d5db;
+  --report-surface: #ffffff;
+  --report-surface-alt: #f9fafb;
+}
+
+@media print {
+  @page {
+    margin: 12mm;
+    size: auto;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+  }
+
+  body.printing-report {
+    color: #0f172a;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body.printing-report #root,
+  body.printing-report [data-sonner-toaster] {
+    display: none !important;
+  }
+
+  body.printing-report .print-report-shell {
+    display: block !important;
+  }
+
+  body.printing-report .print-report-root {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-report-page-break {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  .print-report-no-break {
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+  }
+
+  .print-report-section {
+    break-inside: auto;
+    page-break-inside: auto;
+    box-shadow: none !important;
+  }
+
+  .print-report-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .print-report-table thead {
+    display: table-header-group;
+  }
+
+  .print-report-table tfoot {
+    display: table-footer-group;
+  }
+
+  .print-report-table tr,
+  .print-report-table th,
+  .print-report-table td {
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+    vertical-align: top;
+  }
+}

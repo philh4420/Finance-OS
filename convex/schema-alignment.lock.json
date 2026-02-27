@@ -1,0 +1,10 @@
+{
+  "status": "reconstructed",
+  "reason": "Local convex/schema.ts has been reconstructed from a dev snapshot export (tables) and a Convex dry-run index diff catalog (indexes). Runtime schema validation remains disabled until the original typed schema source is restored.",
+  "requiredAction": "Before unblocking schema pushes, verify index parity for the active dev deployment and review convex/schema.index-catalog.json.",
+  "reconstructionSources": {
+    "devSnapshotExportTables": "/tmp/finance-convex-export/_tables/documents.jsonl",
+    "dryRunIndexCatalog": "/tmp/convex-prod-dryrun.log"
+  },
+  "lastReviewedAt": "2026-02-25T00:00:00Z"
+}
