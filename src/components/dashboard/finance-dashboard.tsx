@@ -158,6 +158,7 @@ const PWA_UPDATE_STATUS_STORAGE_KEY = 'finance-pwa-update-status'
 const PWA_UPDATE_STATUS_READ_VERSION_KEY = 'finance-pwa-update-read-version'
 const PWA_UPDATE_STATUS_EVENT = 'finance:pwa-update-status'
 const NOTIFICATION_READ_SIGNATURE_KEY = 'finance-notification-read-signature'
+const REFERENCE_DATA_BOOTSTRAP_STORAGE_KEY = 'finance-reference-data-bootstrap-v2'
 
 function parseStoredPwaUpdateStatus(raw: string | null): PwaUpdateStatus {
   if (!raw) return { ready: false, version: 0 }
@@ -393,6 +394,7 @@ export function FinanceDashboard({
     lastFlushSummary,
   } = usePwaReliability()
   const searchRef = useRef<HTMLInputElement | null>(null)
+  const hasAttemptedReferenceBootstrapRef = useRef(false)
   const browserLocale =
     typeof navigator !== 'undefined' ? safeLocale(navigator.language) : 'en-US'
   const [displayCurrencyOverride, setDisplayCurrencyOverride] = useState<string | undefined>(() => {
@@ -446,6 +448,7 @@ export function FinanceDashboard({
     {},
   ) as CoreFinanceEditorData | undefined
   const setPreferences = useMutation(api.dashboard.setPreferences)
+  const repopulateReferenceData = useMutation(api.dashboard.repopulateReferenceData)
   const claimLegacyUserData = useMutation(api.dashboard.claimLegacyUserData)
 
   const [selectedRange, setSelectedRange] = useState<RangeKey>('90d')
@@ -676,6 +679,45 @@ export function FinanceDashboard({
       // Ignore storage access failures.
     }
   }, [displayCurrencyOverride])
+
+  useEffect(() => {
+    if (hasAttemptedReferenceBootstrapRef.current) return
+    if (dashboardQuery === undefined) return
+    if (dashboardQuery?.meta?.viewerAuthenticated === false) return
+
+    hasAttemptedReferenceBootstrapRef.current = true
+
+    try {
+      const existingState = window.localStorage.getItem(
+        REFERENCE_DATA_BOOTSTRAP_STORAGE_KEY,
+      )
+      if (existingState) {
+        return
+      }
+    } catch {
+      // Continue without storage short-circuit.
+    }
+
+    void repopulateReferenceData({})
+      .then((result) => {
+        try {
+          window.localStorage.setItem(
+            REFERENCE_DATA_BOOTSTRAP_STORAGE_KEY,
+            String(result.asOfMs),
+          )
+        } catch {
+          // Ignore storage failures.
+        }
+        if (result.insertedCurrencyCount > 0 || result.insertedFxCount > 0) {
+          toast.success('Reference currency data refreshed', {
+            description: `${result.insertedCurrencyCount} currencies and ${result.insertedFxCount} FX pairs added to Convex reference tables.`,
+          })
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to repopulate reference currency data', error)
+      })
+  }, [dashboardQuery, repopulateReferenceData])
 
   useEffect(() => {
     const onStorage = (event: StorageEvent) => {
@@ -1127,6 +1169,10 @@ export function FinanceDashboard({
       await setPreferences({
         displayCurrency: normalized,
         locale: browserLocale,
+      })
+      toast.success(`Currency set to ${normalized}`, {
+        description:
+          'Display and newly entered amounts now use this currency.',
       })
     } catch (error) {
       console.error('Failed to save dashboard currency preference', error)

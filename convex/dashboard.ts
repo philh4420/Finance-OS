@@ -3305,11 +3305,16 @@ export const setPreferences = mutation({
       })
     }
 
-    // Bootstrap the finance base currency once so newly-entered amounts are interpreted
-    // in the user's configured currency instead of defaulting to USD.
+    // Keep base-entry currency aligned with the selected dashboard currency so
+    // user-entered values are interpreted in the visible currency (for example,
+    // entering 100 while GBP is selected is stored as GBP 100, not converted
+    // from an older base).
     const existingFinancePreferences = await findUserDoc(financeDb, 'financePreferences', userId)
     const existingFinanceCurrency = optionalString(existingFinancePreferences?.currency)
-    if (!existingFinanceCurrency) {
+    const normalizedFinanceCurrency = existingFinanceCurrency
+      ? normalizeCurrencyCode(existingFinanceCurrency)
+      : undefined
+    if (normalizedFinanceCurrency !== nextDisplayCurrency) {
       const financePrefPatch = compactObject({
         userId,
         currency: nextDisplayCurrency,
@@ -3326,7 +3331,9 @@ export const setPreferences = mutation({
       }
 
       await recordFinanceAuditEventSafe(financeDb, {
-        action: 'finance_preferences_currency_bootstrap',
+        action: existingFinanceCurrency
+          ? 'finance_preferences_currency_sync'
+          : 'finance_preferences_currency_bootstrap',
         entityId: financePrefId,
         entityType: 'finance_preferences',
         userId,
@@ -3338,7 +3345,9 @@ export const setPreferences = mutation({
         metadataJson: JSON.stringify({
           source: 'dashboard_header_currency_selector',
           recordedAt: now,
-          reason: 'bootstrap_base_currency_from_display_preference',
+          reason: existingFinanceCurrency
+            ? 'sync_base_currency_to_display_preference'
+            : 'bootstrap_base_currency_from_display_preference',
         }),
       })
     }
@@ -3393,6 +3402,117 @@ export const seedDemoData = mutation({
       }),
     })
     throw new Error('Demo data seeding is disabled for this deployment.')
+  },
+})
+
+export const repopulateReferenceData = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await sharedRequireViewerUserId(ctx)
+    const db = ctx.db
+    const now = Date.now()
+    type ReferenceRow = Record<string, unknown> & { _id: unknown }
+
+    const targetCurrencies = buildCurrencyCatalog()
+    const existingCurrencyRows = (await db.query('currencyCatalog').collect()) as ReferenceRow[]
+    const existingCurrenciesByCode = new Map<string, ReferenceRow[]>()
+    for (const row of existingCurrencyRows) {
+      const code = normalizeCurrencyCode(optionalString(row.code) ?? '')
+      if (!code) continue
+      const group = existingCurrenciesByCode.get(code) ?? []
+      group.push(row)
+      existingCurrenciesByCode.set(code, group)
+    }
+
+    let insertedCurrencyCount = 0
+    let updatedCurrencyCount = 0
+    for (const currencyRow of targetCurrencies) {
+      const existing = existingCurrenciesByCode.get(currencyRow.code) ?? []
+      const patch = {
+        code: currencyRow.code,
+        name: currencyRow.name,
+        fractionDigits: currencyRow.fractionDigits,
+        symbol: currencyRow.symbol,
+        active: true,
+        updatedAtMs: now,
+      }
+      if (!existing.length) {
+        await db.insert('currencyCatalog', patch)
+        insertedCurrencyCount += 1
+        continue
+      }
+      for (const existingRow of existing) {
+        await db.patch(existingRow._id as never, patch)
+        updatedCurrencyCount += 1
+      }
+    }
+
+    const targetFxRates = buildUsdQuoteRates(targetCurrencies.map((row) => row.code))
+    const existingFxRows = (await db.query('fxRates').collect()) as ReferenceRow[]
+    const existingFxByPairKey = new Map<string, ReferenceRow[]>()
+    for (const row of existingFxRows) {
+      const pairKey = optionalString(row.pairKey)
+      if (!pairKey) continue
+      const group = existingFxByPairKey.get(pairKey) ?? []
+      group.push(row)
+      existingFxByPairKey.set(pairKey, group)
+    }
+
+    let insertedFxCount = 0
+    let updatedFxCount = 0
+    for (const [quoteCurrency, spec] of targetFxRates.entries()) {
+      const pairKey = `USD_${quoteCurrency}`
+      const existing = existingFxByPairKey.get(pairKey) ?? []
+      const patch = {
+        pairKey,
+        baseCurrency: 'USD',
+        quoteCurrency,
+        rate: spec.rate,
+        source: spec.source,
+        synthetic: spec.synthetic,
+        asOfMs: now,
+        updatedAtMs: now,
+      }
+      if (!existing.length) {
+        await db.insert('fxRates', patch)
+        insertedFxCount += 1
+        continue
+      }
+      for (const existingRow of existing) {
+        await db.patch(existingRow._id as never, patch)
+        updatedFxCount += 1
+      }
+    }
+
+    await recordFinanceAuditEventSafe(db, {
+      action: 'reference_data_repopulate',
+      entityId: 'global_reference_data',
+      entityType: 'reference_data',
+      userId,
+      afterJson: JSON.stringify({
+        currencyCatalogSize: targetCurrencies.length,
+        usdFxPairCount: targetFxRates.size,
+        insertedCurrencyCount,
+        updatedCurrencyCount,
+        insertedFxCount,
+        updatedFxCount,
+      }),
+      metadataJson: JSON.stringify({
+        source: 'manual_repopulate_reference_data',
+        recordedAt: now,
+      }),
+    })
+
+    return {
+      ok: true,
+      currencyCatalogSize: targetCurrencies.length,
+      usdFxPairCount: targetFxRates.size,
+      insertedCurrencyCount,
+      updatedCurrencyCount,
+      insertedFxCount,
+      updatedFxCount,
+      asOfMs: now,
+    }
   },
 })
 
